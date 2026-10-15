@@ -15,7 +15,7 @@ https://kucukkanat.github.io/liberate-pocket/
 
 Open the app with desktop Chrome or Edge over HTTPS. Turn on Pocket, disconnect the official Pocket app, click **Connect Pocket** and select your recorder.
 
-Explore accessible GATT characteristics without authentication. For authenticated status and recording commands, an existing 16-character session key is required. The app does not reset pairing or issue delete commands.
+Explore accessible GATT characteristics without authentication. For authenticated status and recording commands, an existing 16-character session key is required. A captured key can be entered, or a freshly hardware-reset Pocket can be claimed with a new random key (the same way the vendor app pairs). The vendor app then cannot connect until the next reset. The app never issues delete commands.
 
 ## Important
 
