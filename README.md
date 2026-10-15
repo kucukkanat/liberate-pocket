@@ -4,6 +4,7 @@ An independent, open-source browser-only explorer for the Pocket AI recorder.
 
 - Animated marketing site at `/`
 - Web Bluetooth GATT explorer at `/app/`
+- On-device transcription of recordings or any audio file with [Edgewise](https://kucukkanat.github.io/edgewise/) (Moonshine and Whisper, WebGPU or WebAssembly); models download once and are cached
 - No backend, analytics, cookies or Pocket cloud dependency
 - Hosted on GitHub Pages
 
