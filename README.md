@@ -30,6 +30,8 @@ The `.github/workflows/pages.yml` workflow deploys the site on every push to `ma
 
 Serve this directory with any static server, such as `python3 -m http.server 8000`, then visit `http://localhost:8000`.
 
+The app's JavaScript is split into small ES modules under `app/js/` (no build step). Start with [`app/js/README.md`](app/js/README.md) for a map of the modules and how they fit together.
+
 ## Contributing
 
 Protocol compatibility reports and pull requests are welcome.
