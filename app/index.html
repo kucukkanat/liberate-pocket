@@ -51,8 +51,10 @@
 <section class="card wide"><h2>05 — Diagnostics</h2><div class="controls"><button class="secondary" id="clear">Clear</button><button class="secondary" id="copy">Copy diagnostic log</button></div><pre id="log" aria-live="polite">Ready. Open in Chrome or Edge over HTTPS.</pre></section></div></main><script>
 const $=id=>document.getElementById(id);
 const expand=id=>id.length===4?'0000'+id.toLowerCase()+'-0000-1000-8000-00805f9b34fb':id.length===8?id.toLowerCase()+'-0000-1000-8000-00805f9b34fb':id.toLowerCase();
-const SERVICE=expand('001120a0'),COMMAND=expand('001120a2'),RESPONSE=expand('001120a3'),AUDIO=expand('001120a1'),BATTERY=expand('180f'),BATVALUE=expand('2a19');
-const DEFAULT=['001120a0','ffd0','180f','180a','1800','1801','e49a3001','e49a25f8'].map(expand);
+// The Pocket's own services use vendor 128-bit UUIDs, not the Bluetooth base UUID that expand() applies to short IDs.
+const POCKET=id=>id+'-2233-4455-6677-889912345678',CUSTOM=id=>id+'-f69a-11e8-8eb2-f2801f1b9fd1';
+const SERVICE=POCKET('001120a0'),COMMAND=POCKET('001120a2'),RESPONSE=POCKET('001120a3'),AUDIO=POCKET('001120a1'),BATTERY=expand('180f'),BATVALUE=expand('2a19');
+const DEFAULT=[SERVICE,CUSTOM('e49a3001'),CUSTOM('e49a25f8'),...['ffd0','180f','180a','1800','1801'].map(expand)];
 let device,server,tx,rx,audio,authed=false,transfer=null,dates=new Set(),recordings=new Map(),waiters=[],listing=null,scanBusy=false;
 const KEYSTORE='liberate-pocket:key',store=(k,v)=>{try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch{}},stored=k=>{try{return localStorage.getItem(k)||''}catch{return ''}};
 const log=x=>{const p=$('log');p.textContent+='\n'+new Date().toLocaleTimeString()+' '+x;p.scrollTop=p.scrollHeight};
@@ -83,7 +85,7 @@ async function connect(all=false){scanBusy=true;refresh();try{if(!navigator.blue
 await setupProtocol();
 await explore();if(tx&&$('key').value.length===16)await auth();}catch(e){log('Connection: '+e.name+': '+e.message)}finally{scanBusy=false;refresh()}}
 // Each step fails on its own so one bad characteristic (e.g. audio) doesn't take the command channel down with it.
-async function setupProtocol(){let service;try{service=await server.getPrimaryService(SERVICE)}catch(e){log('Pocket service 001120a0 not found ('+e.message+'). Close the vendor app, make sure you picked a PKT01 device, then reconnect.');return}
+async function setupProtocol(){let service;try{service=await server.getPrimaryService(SERVICE)}catch(e){log('Pocket service '+SERVICE+' not found ('+e.message+'). Close the vendor app, make sure you picked a PKT01 device, then reconnect.');return}
 const get=async(uuid,what)=>{try{return await service.getCharacteristic(uuid)}catch(e){log(what+' characteristic missing: '+e.message);return null}};
 rx=await get(RESPONSE,'Reply');if(!rx)return;try{await rx.startNotifications();rx.addEventListener('characteristicvaluechanged',response)}catch(e){log('Reply notifications failed: '+e.message);rx=null;return}
 // The device also takes commands on the reply characteristic (pocket-libre writes there), so fall back to it.
